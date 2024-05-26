@@ -1,0 +1,7 @@
+env: "local"
+storage_path: "postgres://catalogue:catalogue@localhost:5444/catalogue?sslmode=disable"
+token_ttl: 1h
+grpc:
+  port: 44045
+  timeout: 10h
+migrations_path: ./migrations

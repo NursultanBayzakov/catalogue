@@ -1,0 +1,14 @@
+services:
+  db:
+    container_name: catalogue-db-pet-store
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: catalogue
+      POSTGRES_PASSWORD: catalogue
+    ports:
+      - 5444:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
