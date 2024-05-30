@@ -1,9 +1,10 @@
 package models
 
 type Item struct {
-	ID          int32  `gorm:"primaryKey"`
-	Name        string `gorm:"type:varchar(100)"`
-	Price       int32  `gorm:"type:int"`
-	Description string `gorm:"type:varchar(255)"`
-	Quantity    int32  `gorm:"type:int"`
+	ID          int32  `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Price       int32  `json:"price,omitempty"`
+	Description string `json:"description,omitempty"`
+	Quantity    int32  `json:"quantity,omitempty"`
+	ImageURL    string `json:"image_url"`
 }

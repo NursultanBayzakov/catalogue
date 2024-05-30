@@ -73,6 +73,7 @@ func (ir *ItemRepo) GetItemById(ctx context.Context, id int) (*models.Item, erro
 		&item.Price,
 		&item.Description,
 		&item.Quantity,
+		&item.ImageURL,
 	)
 	if err != nil {
 		switch {
@@ -107,6 +108,7 @@ func (ir *ItemRepo) GetAllItems(ctx context.Context) ([]*models.Item, error) {
 			&item.Price,
 			&item.Description,
 			&item.Quantity,
+			&item.ImageURL,
 		)
 		if err != nil {
 			return nil, fail(err)

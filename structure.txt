@@ -1,0 +1,49 @@
+catalogue-service
+│
+├── cmd
+│   └── catalogue
+│       └── main.go
+│
+├── config
+│   ├── config.go
+│   ├── config_local.yml
+│   └── config_tests.yml
+│
+├── internal
+│   ├── app
+│   │   ├── grpc
+│   │   │   └── app.go
+│   │   └── app.go
+│   │
+│   ├── data
+│   │   └── models
+│   │       ├── item_info.go
+│   │       ├── models.go
+│   │       ├── storage.go
+│   │       └── user.go
+│   │
+│   ├── grpc
+│   │   └── catalogue
+│   │       └── server.go
+│   │
+│   ├── jsonLog
+│   │   └── jsonLog.go
+│   │
+│   ├── mailer
+│   │
+│   ├── services
+│   │   └── catalogue
+│   │       └── catalogue.go
+│   │
+│   ├── sl
+│   │   └── sl.go
+│   │
+│   └── validator
+│
+├── migrations
+│   ├── 000001_create_item_info_table.down.sql
+│   └── 000001_create_item_info_table.up.sql
+│
+├── docker-compose.yml
+│
+└── go.mod

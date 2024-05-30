@@ -1,0 +1,2 @@
+ALTER TABLE IF EXISTS item_info
+    DROP COLUMN IF EXISTS image_url;
