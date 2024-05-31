@@ -16,7 +16,8 @@ type ItemRepo struct {
 }
 
 var (
-	ErrRecordNotFound = errors.New("record (row, entry) not found")
+	ErrRecordNotFound   = errors.New("record (row, entry) not found")
+	ErrItemAlreadyExist = errors.New("item already exists")
 )
 
 func (ir *ItemRepo) SaveItem(ctx context.Context, item *models.Item) (int32, error) {
@@ -24,14 +25,15 @@ func (ir *ItemRepo) SaveItem(ctx context.Context, item *models.Item) (int32, err
 	fail := func(e error) error {
 		return fmt.Errorf("%s: %v", op, e)
 	}
-	query := `INSERT INTO item_info (name, price, description, quantity)
-			VALUES ($1, $2, $3, $4)
+	query := `INSERT INTO catalogue.item_info (name, price, description, quantity, image_url)
+			VALUES ($1, $2, $3, $4, $5)
 			RETURNING id`
 	args := []interface{}{
 		item.Name,
 		item.Price,
 		item.Description,
 		item.Quantity,
+		item.ImageURL,
 	}
 
 	tx, err := ir.DB.BeginTx(ctx, nil)
@@ -45,7 +47,7 @@ func (ir *ItemRepo) SaveItem(ctx context.Context, item *models.Item) (int32, err
 		var pqErr *pq.Error
 		switch {
 		case errors.As(err, &pqErr) && pqErr.Code == "23505" && strings.Contains(pqErr.Message, "item_info_name_key"):
-			return 0, fail(err)
+			return 0, ErrItemAlreadyExist
 		case errors.Is(err, sql.ErrNoRows):
 			return 0, fail(err)
 		default:
@@ -65,7 +67,7 @@ func (ir *ItemRepo) GetItemById(ctx context.Context, id int) (*models.Item, erro
 		return fmt.Errorf("%s: %v", op, e)
 	}
 	var item models.Item
-	query := `SELECT * FROM item_info
+	query := `SELECT * FROM catalogue.item_info
 			WHERE id = $1`
 	err := ir.DB.QueryRowContext(ctx, query, id).Scan(
 		&item.ID,
@@ -91,7 +93,7 @@ func (ir *ItemRepo) GetAllItems(ctx context.Context) ([]*models.Item, error) {
 	fail := func(e error) error {
 		return fmt.Errorf("%s, %v", op, e)
 	}
-	query := `SELECT * FROM item_info`
+	query := `SELECT * FROM catalogue.item_info`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	rows, err := ir.DB.QueryContext(ctx, query)
@@ -126,7 +128,7 @@ func (ir *ItemRepo) Delete(ctx context.Context, id int) error {
 		return fmt.Errorf("%s: %v", op, e)
 	}
 	query := `
-			DELETE FROM item_info
+			DELETE FROM catalogue.item_info
 			WHERE id = $1`
 	tx, err := ir.DB.BeginTx(ctx, nil)
 	defer tx.Rollback()

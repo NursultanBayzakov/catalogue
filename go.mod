@@ -3,7 +3,7 @@ module catalogue-service
 go 1.21
 
 require (
-	github.com/bxiit/protos v0.0.12
+	github.com/bxiit/protos v0.1.0
 	github.com/fatih/color v1.17.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0

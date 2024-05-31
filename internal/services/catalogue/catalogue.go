@@ -1,9 +1,11 @@
 package catalogue
 
 import (
+	"catalogue-service/internal/data"
 	"catalogue-service/internal/data/models"
 	"catalogue-service/internal/sl"
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -53,8 +55,14 @@ func (c *Catalogue) CreateItem(ctx context.Context, item *models.Item) (int32, e
 
 	id, err := c.catalogueProvider.SaveItem(ctx, item)
 	if err != nil {
-		c.log.Warn("failed to save item", sl.Err(err))
-		return 0, fmt.Errorf("%s", op)
+		switch {
+		case errors.Is(err, data.ErrItemAlreadyExist):
+			c.log.Warn("item already exists", sl.Err(err))
+			return 0, data.ErrItemAlreadyExist
+		default:
+			c.log.Warn("failed to save item", sl.Err(err))
+			return 0, fmt.Errorf("%s", op)
+		}
 	}
 
 	return id, nil

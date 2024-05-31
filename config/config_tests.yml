@@ -1,5 +1,5 @@
 env: "local"
-storage_path: "postgres://auth_test:auth_test@localhost:5446/postgres?sslmode=disable"
+storage_path: "postgres://bxiit:bxiit@localhost:5447/pet-store-test?sslmode=disable"
 token_ttl: 1h
 grpc:
   port: 44046

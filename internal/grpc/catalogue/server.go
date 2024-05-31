@@ -1,9 +1,11 @@
 package catalogueGrpc
 
 import (
+	"catalogue-service/internal/data"
 	"catalogue-service/internal/data/models"
 	"context"
 	"errors"
+	"fmt"
 	cataloguev1 "github.com/bxiit/protos/gen/go/catalogue"
 	"github.com/jinzhu/copier"
 	"google.golang.org/grpc"
@@ -63,6 +65,10 @@ func (cs *catalogueService) CreateItem(ctx context.Context, req *cataloguev1.Cre
 
 	id, err := cs.catalogue.CreateItem(ctx, &item)
 	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrItemAlreadyExist):
+			return nil, status.Error(codes.AlreadyExists, fmt.Sprintf("item '%s' already exists", req.Item.Name))
+		}
 		return nil, status.Error(codes.Internal, "error with create item")
 	}
 

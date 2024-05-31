@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS item_info;
+DROP TABLE IF EXISTS catalogue.item_info;
