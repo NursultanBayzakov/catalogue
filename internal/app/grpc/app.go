@@ -3,7 +3,7 @@ package grpcapp
 import (
 	catalogueGrpc "catalogue-service/internal/grpc/catalogue"
 	"fmt"
-	ssov1 "github.com/bxiit/protos/gen/go/sso"
+	ssov1 "github.com/NursultanBayzakov/protos/gen/go/sso"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc"
@@ -22,7 +22,6 @@ type App struct {
 }
 
 var AuthServiceClient ssov1.AuthClient
-var UserInfoServiceClient ssov1.UserInfoClient
 
 func New(
 	log *slog.Logger,
@@ -92,7 +91,6 @@ func ConnectToSsoService() {
 		log.Fatalf("failed to connect to auth service: %v", err)
 	}
 	AuthServiceClient = ssov1.NewAuthClient(conn)
-	UserInfoServiceClient = ssov1.NewUserInfoClient(conn)
 }
 
 func ConnectToOrderService() {

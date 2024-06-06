@@ -3,6 +3,7 @@ module catalogue-service
 go 1.21
 
 require (
+	github.com/NursultanBayzakov/protos v0.0.6-0.20240605175916-4e1d793ee37a
 	github.com/bxiit/protos v0.1.0
 	github.com/fatih/color v1.17.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
@@ -27,7 +28,7 @@ require (
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240604185151-ef581f913117 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

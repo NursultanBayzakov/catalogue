@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	cataloguev1 "github.com/bxiit/protos/gen/go/catalogue"
+	cataloguev1 "github.com/NursultanBayzakov/protos/gen/go/catalogue"
 	"github.com/jinzhu/copier"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

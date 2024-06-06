@@ -2,7 +2,9 @@ package grpcapp
 
 import (
 	"context"
-	ssov1 "github.com/bxiit/protos/gen/go/sso"
+	"fmt"
+	ssov1 "github.com/NursultanBayzakov/protos/gen/go/sso"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -32,22 +34,50 @@ func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 		return nil, status.Errorf(codes.Unauthenticated, "authentication is required")
 	}
 
-	getUserInfoRequest := &ssov1.GetUserInfoRequest{Token: tkn[0]}
-	getUserInfoResponse, err := UserInfoServiceClient.GetUserInfo(ctx, getUserInfoRequest)
+	userInfo, err := DecodeToken(tkn[0])
 	if err != nil {
-		log.Printf("failed to get user info %v", err)
-		return nil, status.Errorf(codes.Internal, "get user info failed")
+		return nil, status.Errorf(codes.InvalidArgument, "get user info failed")
 	}
-	isAdminRequest := &ssov1.IsAdminRequest{UserId: int64(getUserInfoResponse.User.Id)}
+	isAdminRequest := &ssov1.IsAdminRequest{UserId: int64(userInfo.UID)}
 	isAdminResponse, err := AuthServiceClient.IsAdmin(ctx, isAdminRequest)
 	if err != nil {
 		log.Printf("permissions fail %v", err)
-		return nil, status.Errorf(codes.Internal, "permission failed")
+		return nil, status.Errorf(codes.PermissionDenied, "permission failed")
 	}
 
 	if !isAdminResponse.IsAdmin {
-		return nil, status.Errorf(codes.Internal, "permission failed")
+		return nil, status.Errorf(codes.PermissionDenied, "permission failed")
 	}
 
 	return handler(ctx, req)
+}
+
+func DecodeToken(tokenString string) (*UserClaims, error) {
+	claims := &UserClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		// Ensure the signing method is HMAC
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte("secret"), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("token is invalid")
+	}
+
+	return claims, nil
+}
+
+// UserClaims represents the expected claims in the JWT token
+type UserClaims struct {
+	UID   int    `json:"uid"`
+	Email string `json:"email"`
+	AppID int    `json:"app_id"`
+	jwt.RegisteredClaims
 }

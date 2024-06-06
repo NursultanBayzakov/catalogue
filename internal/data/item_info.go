@@ -25,15 +25,13 @@ func (ir *ItemRepo) SaveItem(ctx context.Context, item *models.Item) (int32, err
 	fail := func(e error) error {
 		return fmt.Errorf("%s: %v", op, e)
 	}
-	query := `INSERT INTO catalogue.item_info (name, price, description, quantity, image_url)
-			VALUES ($1, $2, $3, $4, $5)
+	query := `INSERT INTO catalogue.item_info (name, description, quantity)
+			VALUES ($1, $2, $3)
 			RETURNING id`
 	args := []interface{}{
 		item.Name,
-		item.Price,
 		item.Description,
 		item.Quantity,
-		item.ImageURL,
 	}
 
 	tx, err := ir.DB.BeginTx(ctx, nil)
@@ -72,10 +70,8 @@ func (ir *ItemRepo) GetItemById(ctx context.Context, id int) (*models.Item, erro
 	err := ir.DB.QueryRowContext(ctx, query, id).Scan(
 		&item.ID,
 		&item.Name,
-		&item.Price,
 		&item.Description,
 		&item.Quantity,
-		&item.ImageURL,
 	)
 	if err != nil {
 		switch {
@@ -107,10 +103,8 @@ func (ir *ItemRepo) GetAllItems(ctx context.Context) ([]*models.Item, error) {
 		err := rows.Scan(
 			&item.ID,
 			&item.Name,
-			&item.Price,
 			&item.Description,
 			&item.Quantity,
-			&item.ImageURL,
 		)
 		if err != nil {
 			return nil, fail(err)
